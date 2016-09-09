@@ -1,16 +1,17 @@
 #!/bin/bash
-# Path to netcat
-NC="/bin/nc"
+# Hopefully netcat is in path
+NC="nc"
 # Where are we sending messages from / to?
-ORIG_IP="127.0.0.1"
-DEST_IP="127.0.0.11"
+ORIG_IP="172.16.0.73"
+DEST_IP="172.16.0.71"
+PORT="33515"
 # List of messages.
-MESSAGES=("Error Event" "Warning Event" "Info Event")
+MESSAGES=("Sep 9 15:32:15 Gema.soneco.co.rs MSWinEventLog       1       Security        1380840 pet. sept. 09 15:32:14 20       4624 $
 # How long to wait in between sending messages.
 SLEEP_SECS=1
 # How many message to send at a time.
 COUNT=1
-# What priority?  
+# What priority?
 #             emergency   alert   critical   error   warning   notice   info   debug
 # kernel              0       1          2       3         4        5      6       7
 # user                8       9         10      11        12       13     14      15
@@ -40,12 +41,12 @@ PRIORITIES=(0 1 2 3 4 5 6 7)
 
 while [ 1 ]
 do
-	for i in $(seq 1 $COUNT)
-	do
-		# Picks a random syslog message from the list.
-		RANDOM_MESSAGE=${MESSAGES[$RANDOM % ${#MESSAGES[@]} ]}
-		PRIORITY=${PRIORITIES[$RANDOM % ${#PRIORITIES[@]} ]}
-		$NC $DEST_IP -u 514 -w 0 <<< "<$PRIORITY>`env LANG=us_US.UTF-8 date "+%b %d %H:%M:%S"` $ORIG_IP service: $RANDOM_MESSAGE"
-	done
-	sleep $SLEEP_SECS
+        for i in $(seq 1 $COUNT)
+        do
+                # Picks a random syslog message from the list.
+                RANDOM_MESSAGE=${MESSAGES[$RANDOM % ${#MESSAGES[@]} ]}
+                PRIORITY=${PRIORITIES[$RANDOM % ${#PRIORITIES[@]} ]}
+                $NC $DEST_IP -u $PORT -w 0 <<< "<$PRIORITY>`env LANG=us_US.UTF-8 date "+%b %d %H:%M:%S"` $ORIG_IP service: $RANDOM_ME$
+        done
+        sleep $SLEEP_SECS
 done
